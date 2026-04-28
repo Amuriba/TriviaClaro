@@ -699,7 +699,8 @@ html, body {
       <span class="hdr-title">Trivia Mundial 2026</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()" title="Cambiar tema">☀️</button>
+      <button class="btn-theme" id="btn-fs" onclick="toggleFS()" title="Pantalla completa">⛶</button>
+      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
       <button class="btn-admin-hdr" onclick="irAdmin()">⚙️ Admin</button>
       <img class="logo-wc"
         src="2026_FIFA_World_Cup_emblem.svg"
@@ -1527,7 +1528,7 @@ function toggleTheme() {
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem('tw_theme') || 'dark';
+  const saved = localStorage.getItem('tw_theme') || 'light';
   applyTheme(saved);
 }
 
@@ -1552,6 +1553,27 @@ function loadFontScale() {
   const saved = parseFloat(localStorage.getItem('tw_font_scale')) || 1;
   applyFontScale(saved);
 }
+
+// ════════════════════════════════════════
+// PANTALLA COMPLETA
+// ════════════════════════════════════════
+function toggleFS() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen).call(el).catch(() => {});
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+}
+
+function updateFSBtn() {
+  const btn = document.getElementById('btn-fs');
+  if (!btn) return;
+  btn.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '⊡' : '⛶';
+}
+
+document.addEventListener('fullscreenchange', updateFSBtn);
+document.addEventListener('webkitfullscreenchange', updateFSBtn);
 
 // ════════════════════════════════════════
 // INIT
