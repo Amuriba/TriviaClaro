@@ -65,12 +65,15 @@ html, body {
 /* ── FONDO ── */
 .bg {
   position: fixed; inset: 0; z-index: 0; overflow: hidden;
-  background: var(--bg-radial);
-  transition: background .4s;
+  background: url('background.jpeg') center/cover no-repeat;
+}
+.bg::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: rgba(0,0,0,0.48);
 }
 .bg::after {
   content: '';
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 2;
   background-image:
     repeating-linear-gradient(45deg, transparent 0px, transparent 58px, var(--grid-line) 58px, var(--grid-line) 59px),
     repeating-linear-gradient(-45deg, transparent 0px, transparent 58px, var(--grid-line) 58px, var(--grid-line) 59px);
@@ -100,11 +103,10 @@ html, body {
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px;
   padding: 10px 16px;
-  background: var(--bg-hdr);
-  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(12px);
   border-bottom: 2px solid var(--rojo);
   flex-shrink: 0;
-  transition: background .3s;
 }
 .hdr-logo-wrap { display: flex; align-items: center; gap: 10px; }
 .logo-claro {
@@ -168,28 +170,45 @@ html, body {
 #s-inicio { width: 100%; max-width: 560px; text-align: center; }
 
 .trophy-icon {
-  font-size: clamp(48px, 10vw, 72px);
-  display: block; margin-bottom: 12px;
+  font-size: clamp(56px, 12vw, 80px);
+  display: block; margin-bottom: 4px;
+  filter: drop-shadow(0 4px 20px rgba(255,200,0,0.55));
   animation: pulse 2.2s ease-in-out infinite;
 }
 @keyframes pulse {
   0%,100% { transform: scale(1) rotate(-2deg); }
   50%      { transform: scale(1.08) rotate(2deg); }
 }
+
+/* Título con líneas independientes */
 .main-ttl {
   font-family: 'Bebas Neue', cursive;
-  font-size: clamp(2.8rem, 10vw, 4.5rem);
-  line-height: 0.88;
-  letter-spacing: 3px;
-  color: var(--texto);
-  margin-bottom: 4px;
+  letter-spacing: 3px; line-height: 0.88;
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 10px;
 }
 .main-ttl em { color: var(--rojo); font-style: normal; }
+.ttl-l1 {
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  color: #fff;
+  text-shadow: 2px 4px 14px rgba(0,0,0,0.95);
+}
+.ttl-l2 {
+  font-size: clamp(4.5rem, 18vw, 9rem);
+  color: var(--rojo);
+  text-shadow: 0 0 40px rgba(227,0,15,0.70), 2px 4px 14px rgba(0,0,0,0.95);
+  line-height: 0.82;
+}
+.ttl-l3 {
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  color: #fff;
+  text-shadow: 2px 4px 14px rgba(0,0,0,0.95);
+}
 
 /* ── MARCA DECORATIVA (tres trazos estilo Claro) ── */
 .ttl-wrap {
   position: relative;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 .claro-mark {
   position: absolute;
@@ -199,70 +218,114 @@ html, body {
   overflow: visible;
 }
 
-.main-sub {
+/* Subtítulo badge */
+.subtitle-badge {
+  display: inline-block;
+  border: 2px solid rgba(255,255,255,0.30);
+  border-radius: 6px;
+  padding: 8px 22px;
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600; font-size: clamp(0.75rem, 2.5vw, 0.95rem);
-  letter-spacing: 5px; color: var(--texto-dim);
-  text-transform: uppercase; margin-bottom: 24px;
+  font-weight: 700; font-size: clamp(0.75rem, 2.5vw, 0.92rem);
+  letter-spacing: 4px; color: #fff;
+  text-transform: uppercase; margin-bottom: 16px;
+  background: rgba(0,0,0,0.5);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
 }
+.subtitle-badge em { color: #F59E0B; font-style: normal; }
 
-/* DATO DEMO */
-.demo-box {
-  background: var(--bg-card);
-  border: 1px solid rgba(227,0,15,0.25);
+/* Info cards de premios/fechas */
+.info-cards {
+  width: 100%; display: flex; flex-direction: column;
+  gap: 10px; margin-bottom: 18px;
+}
+.info-card {
+  background: rgba(0,0,0,0.7);
+  border: 1px dashed rgba(255,255,255,0.22);
   border-radius: var(--r-soft);
-  padding: 18px 20px;
-  margin-bottom: 24px;
-  min-height: 90px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  box-shadow: var(--shadow-red);
-  position: relative;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
 }
-.demo-label {
+.ic-icon { font-size: 1.7rem; flex-shrink: 0; line-height: 1; }
+.ic-title {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.65rem; letter-spacing: 3px;
-  color: var(--rojo); text-transform: uppercase;
-  margin-bottom: 8px;
+  font-weight: 700; font-size: clamp(0.88rem, 3vw, 1.05rem);
+  letter-spacing: 1px; color: #fff; text-transform: uppercase;
 }
-.demo-fact {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600; font-size: clamp(1rem, 3vw, 1.15rem);
-  text-align: center; line-height: 1.35;
-  color: var(--texto);
-  transition: opacity .4s;
+.ic-title em { color: #F59E0B; font-style: normal; }
+.ic-sub {
+  font-family: 'Barlow', sans-serif; font-size: 0.82rem;
+  color: rgba(255,255,255,0.70); margin-top: 3px; line-height: 1.3;
 }
-.demo-fact.out { opacity: 0; }
 
+/* Botón jugar */
 .btn-jugar {
   font-family: 'Bebas Neue', cursive;
-  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-size: clamp(1.4rem, 4.5vw, 1.9rem);
   letter-spacing: 4px; color: #fff;
   background: var(--rojo);
-  border: none; border-radius: var(--r-soft);
-  padding: 16px 48px;
-  cursor: pointer; width: 100%; max-width: 360px;
-  box-shadow: var(--shadow-red), inset 0 -3px 0 rgba(0,0,0,0.35);
+  border: none; border-radius: 50px;
+  padding: 18px 48px;
+  cursor: pointer; width: 100%; max-width: 400px;
+  box-shadow: 0 0 32px rgba(227,0,15,0.55), 0 4px 24px rgba(227,0,15,0.40), inset 0 -4px 0 rgba(0,0,0,0.35);
   transition: transform .15s, box-shadow .15s, background .15s;
   margin-bottom: 14px;
   position: relative; overflow: hidden;
 }
 .btn-jugar::after {
   content:''; position:absolute; top:0; left:-120%; width:60%; height:100%;
-  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.20),transparent);
   transition: left .5s;
 }
-.btn-jugar:hover { background: var(--rojo-lt); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(227,0,15,0.55), inset 0 -3px 0 rgba(0,0,0,0.35); }
+.btn-jugar:hover { background: var(--rojo-lt); transform: translateY(-2px); box-shadow: 0 0 48px rgba(227,0,15,0.75), 0 8px 32px rgba(227,0,15,0.55), inset 0 -4px 0 rgba(0,0,0,0.35); }
 .btn-jugar:hover::after { left:140%; }
 .btn-jugar:active { transform: translateY(0); }
 
-.inicio-meta {
+/* Tagline */
+.tagline {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.8rem; color: var(--texto-dim);
-  letter-spacing: 1px; display: flex;
-  gap: 12px; justify-content: center; flex-wrap: wrap;
+  font-weight: 700; font-size: clamp(0.78rem, 2.5vw, 0.95rem);
+  letter-spacing: 4px; color: rgba(255,255,255,0.88);
+  text-transform: uppercase; margin-bottom: 16px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
 }
-.inicio-meta span { display: flex; align-items: center; gap: 4px; }
+.tagline em { color: var(--rojo); font-style: normal; }
+
+/* Stats row */
+.stats-row {
+  display: flex; width: 100%;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: var(--r-soft);
+}
+.stat-card {
+  flex: 1; padding: 14px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  animation: breathe 2.2s ease-in-out infinite;
+}
+.stat-card:nth-child(2) { animation-delay: .75s; }
+.stat-card:nth-child(3) { animation-delay: 1.5s; }
+.stat-card + .stat-card { border-left: 1px solid rgba(255,255,255,0.13); }
+.stat-ico {
+  font-size: 1.05rem;
+  background: var(--rojo); width: 34px; height: 34px;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+}
+.stat-val {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(1.3rem, 5vw, 1.7rem); color: #fff; line-height: 1;
+}
+.stat-lbl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.64rem; color: rgba(255,255,255,0.60);
+  letter-spacing: 1px; text-transform: uppercase;
+  text-align: center; line-height: 1.2;
+}
+#demo-txt { font-size: clamp(0.95rem, 3vw, 1.15rem); }
+
+/* demo-box oculto — el JS sigue funcionando */
+.demo-box { display: none; }
+.demo-fact { transition: opacity .4s; }
+.demo-fact.out { opacity: 0; }
 
 /* ── PANTALLA JUEGO ── */
 #s-juego { width: 100%; max-width: 620px; }
@@ -289,20 +352,30 @@ html, body {
   font-size: 0.85rem; font-weight: 600;
   letter-spacing: 1px; color: var(--texto-dim);
 }
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  45%       { transform: scale(1.13); }
+  55%       { transform: scale(1.13); }
+}
+@keyframes blink { from{opacity:1} to{opacity:.4} }
+
 .gm-timer {
   font-family: 'Bebas Neue', cursive;
   font-size: clamp(2rem, 7vw, 2.6rem);
   color: var(--texto); text-align: center;
   line-height: 1; transition: color .3s;
   min-width: 60px;
+  animation: breathe 2.2s ease-in-out infinite;
+  display: inline-block;
 }
 .gm-timer.red { color: var(--rojo); animation: blink .6s ease-in-out infinite alternate; }
-@keyframes blink { from{opacity:1} to{opacity:.4} }
 .gm-pts {
   font-family: 'Bebas Neue', cursive;
   font-size: clamp(1.4rem, 4vw, 1.8rem);
   color: var(--rojo); text-align: right;
   letter-spacing: 1px;
+  animation: breathe 2.8s ease-in-out infinite;
+  display: inline-block;
 }
 
 /* Tarjeta pregunta */
@@ -677,6 +750,41 @@ html, body {
   transition: border-color .2s, color .2s;
 }
 .btn-cancelar:hover { border-color: var(--rojo); color: var(--rojo); }
+
+/* ── BARRA PATROCINADORES ── */
+.sponsor-bar {
+  width: 80%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+}
+.sponsor-bar img {
+  width: 25%;
+  min-width: 130px;
+  max-width: 210px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  padding: 14px 16px 20px;
+  text-align: center;
+  width: 100%;
+}
+.footer-copy {
+  color: var(--texto-dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
@@ -700,7 +808,6 @@ html, body {
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <button class="btn-theme" id="btn-fs" onclick="toggleFS()" title="Pantalla completa">⛶</button>
-      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
       <button class="btn-admin-hdr" onclick="irAdmin()">⚙️ Admin</button>
       <img class="logo-wc"
         src="2026_FIFA_World_Cup_emblem.svg"
@@ -717,30 +824,60 @@ html, body {
     
     <div id="s-inicio" class="screen on">
       <span class="trophy-icon">🏆</span>
-      
-      <div class="ttl-wrap" >
-        <h1 class="main-ttl">TRIVIA<br><em>MUNDIAL</em><br>2026</h1>
-        <!-- Tres trazos decorativos: 0° · 45° (más largo) · 90° -->
+
+      <div class="ttl-wrap">
+        <h1 class="main-ttl">
+          <span class="ttl-l1">TRIVIA</span>
+          <span class="ttl-l2">MUNDIAL</span>
+          <span class="ttl-l3">2026</span>
+        </h1>
+        <!-- Tres trazos decorativos estilo Claro -->
         <svg class="claro-mark" viewBox="0 0 68 82" aria-hidden="true">
-          <rect x="40" y="43"  width="40" height="15" rx="3" fill="#E3000F"/>
-          <rect x="50"  y="10" width="60" height="15" rx="3" fill="#E3000F" transform="rotate(-45 34 38)"/>
-          <rect x="-5"  y="-50"  width="15"  height="40" rx="3" fill="#E3000F"/>
+          <rect x="40" y="43"  width="40" height="15" rx="3" fill="#E3000F" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <rect x="50"  y="10" width="60" height="15" rx="3" fill="#E3000F" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" transform="rotate(-45 34 38)"/>
+          <rect x="-5"  y="-50"  width="15"  height="40" rx="3" fill="#E3000F" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
         </svg>
       </div>
-      <p class="main-sub">¡Demuestra que eres el campeón!</p>
 
-      <div class="demo-box">
-        <div class="demo-label">⚡ Dato del Mundial ⚡</div>
-        <p class="demo-fact" id="demo-txt">Cargando...</p>
+      <p class="subtitle-badge">¡Demuestra que eres el <em>Campeón!</em></p>
+
+      <div class="info-cards">
+        <div class="info-card">          
+          <div>            
+            <p class="ic-title"><em class="ic-icon">🎁</em><em>Gana</em> Premios Instantáneos</p>            
+          </div>
+        </div>
+        <div class="info-card">
+          
+          <div>
+            <p class="ic-title">⚡Dato del Mundial ⚡</p>
+            <p class="ic-sub demo-fact" id="demo-txt">Cargando...</p>
+          </div>
+        </div>
       </div>
 
-      <button class="btn-jugar" onclick="iniciar()">⚽ JUGAR AHORA</button>
+      <button class="btn-jugar" onclick="iniciar()">⚽ ¡JUGAR Y GANAR! ›</button>
 
-      <div class="inicio-meta">
-        <span>📋 <span id="stat-n">10</span> preguntas</span>
-        <span>⏱️ <span id="stat-t">30</span> seg / pregunta</span>
-        <span>⚡ +pts por rapidez</span>
+      <p class="tagline">⚡ Demuestra que eres el <em>Más Rápido</em> ⚡</p>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-ico">🏆</span>
+          <p class="stat-val"><span id="stat-n">10</span></p>
+          <p class="stat-lbl">Preguntas</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-ico">⏱️</span>
+          <p class="stat-val"><span id="stat-t">30</span></p>
+          <p class="stat-lbl">Segundos<br>por pregunta</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-ico">⚡</span>
+          <p class="stat-val">+</p>
+          <p class="stat-lbl">Pts<br>por rapidez</p>
+        </div>
       </div>
+
     </div>
 
     <!-- JUEGO -->
@@ -927,8 +1064,16 @@ html, body {
 
   </div><!-- /content -->
 
-  <footer style="margin-top: 40px; color: #888; font-size: 0.9em; text-align:center; padding: 0 16px 20px; width:100%;">
-    &copy; 2026 Andres MB. Claro, Trivia Mundialista
+  <!-- ═══ PATROCINADORES ═══ -->
+  <div class="sponsor-bar">
+    <img src="Claro-logo.png" alt="Claro"
+         onerror="this.style.display='none'">
+    <img src="logomabu.png" alt="Mabu"
+         onerror="this.style.display='none'">
+  </div>
+
+  <footer class="site-footer">
+    <p class="footer-copy">&copy; 2026 Andres MB. Claro, Trivia Mundialista</p>
   </footer>
 
 </div><!-- /app -->
@@ -1548,8 +1693,7 @@ function toggleTheme() {
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem('tw_theme') || 'light';
-  applyTheme(saved);
+  applyTheme('dark');
 }
 
 // ════════════════════════════════════════
