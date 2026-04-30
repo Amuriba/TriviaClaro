@@ -1312,12 +1312,52 @@ const DEMOS = [
 // ════════════════════════════════════════
 let qs = [], cfg = { n:10, t:30, p:100, b:10, o:'rand' };
 let gs = { qs:[], i:0, pts:0, timer:null, sec:30, done:false };
-let lastRoundQs = new Set(); // evita repetición en ronda consecutiva
+let deck = []; // mazo continuo: se rellena y baraja solo al agotarse
 let demoTmr = null, demoIdx = 0;
 
 // ════════════════════════════════════════
 // STORAGE
 // ════════════════════════════════════════
+function fisherYates(arr) {
+  for(let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function loadDeck() {
+  try {
+    const d = localStorage.getItem('tw_deck');
+    deck = d ? JSON.parse(d) : [];
+  } catch { deck = []; }
+}
+
+function saveDeck() {
+  localStorage.setItem('tw_deck', JSON.stringify(deck));
+}
+
+// Devuelve las siguientes n preguntas del mazo sin repetición
+function drawFromDeck(n) {
+  if(!deck.length) {
+    deck = fisherYates([...qs]);
+    saveDeck();
+  }
+  const result = [];
+  while(result.length < n && deck.length) {
+    result.push(deck.shift());
+  }
+  // Si el mazo se agotó y faltan preguntas, recargar y seguir
+  if(result.length < n && qs.length > n) {
+    deck = fisherYates([...qs].filter(q => !result.find(r => r.p === q.p)));
+    while(result.length < n && deck.length) {
+      result.push(deck.shift());
+    }
+  }
+  saveDeck();
+  return result;
+}
+
 function load() {
   try {
     const q = localStorage.getItem('tw_qs');
@@ -1325,6 +1365,7 @@ function load() {
     const c = localStorage.getItem('tw_cfg');
     if(c) cfg = {...cfg,...JSON.parse(c)};
   } catch { qs = [...DEFAULT_QS]; }
+  loadDeck();
   updateStat();
 }
 function save() {
@@ -1427,22 +1468,8 @@ function cerrarModalCancelar() {
 // ════════════════════════════════════════
 function iniciar() {
   if(!qs.length) { toast('❌ No hay preguntas'); return; }
-  let pool = [...qs];
-  if(cfg.o === 'rand') {
-    // Fisher-Yates: shuffle uniforme sin sesgo
-    for(let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    // Priorizar preguntas que NO salieron en la ronda anterior
-    if(lastRoundQs.size && pool.length > cfg.n) {
-      const fresh = pool.filter(q => !lastRoundQs.has(q.p));
-      const used  = pool.filter(q =>  lastRoundQs.has(q.p));
-      pool = [...fresh, ...used];
-    }
-  }
-  pool = pool.slice(0, Math.min(cfg.n, pool.length));
-  lastRoundQs = new Set(pool.map(q => q.p)); // guarda las de esta ronda
+  const n = Math.min(cfg.n, qs.length);
+  const pool = cfg.o === 'rand' ? drawFromDeck(n) : qs.slice(0, n);
   gs = { qs:pool, i:0, pts:0, timer:null, sec:cfg.t, done:false };
   show('s-juego');
   document.getElementById('gm-tot').textContent = pool.length;
@@ -1742,7 +1769,7 @@ function saveQ(){
   const idx=parseInt(document.getElementById('edit-idx').value);
   if(idx>=0){ qs[idx]=obj; toast('✅ Pregunta actualizada'); }
   else{ qs.push(obj); toast('✅ Pregunta agregada'); }
-  save(); clearForm(); updateStat(); tab('lista');
+  save(); deck=[]; saveDeck(); clearForm(); updateStat(); tab('lista');
 }
 
 function editQ(i){
@@ -1758,7 +1785,7 @@ function editQ(i){
 
 function delQ(i){
   if(!confirm(`¿Eliminar pregunta #${i+1}?`)) return;
-  qs.splice(i,1); save(); renderList(); updateStat(); toast('🗑️ Eliminada');
+  qs.splice(i,1); save(); deck=[]; saveDeck(); renderList(); updateStat(); toast('🗑️ Eliminada');
 }
 
 function clearForm(){
@@ -1808,7 +1835,7 @@ function importJSON(ev){
       const d=JSON.parse(e.target.result);
       if(d.qs) qs=d.qs;
       if(d.cfg) cfg={...cfg,...d.cfg};
-      save(); renderList(); loadCfgForm(); refreshPreview(); updateStat();
+      save(); deck=[]; saveDeck(); renderList(); loadCfgForm(); refreshPreview(); updateStat();
       toast('✅ JSON importado');
     } catch{ toast('❌ Error en JSON'); }
   };
